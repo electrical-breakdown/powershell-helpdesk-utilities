@@ -67,7 +67,7 @@ function Get-UserResponse {
     }
 }
 
-function Show-UserData {
+function Show-ADUserData {
 
     <#
     
