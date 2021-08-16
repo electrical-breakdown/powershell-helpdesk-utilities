@@ -66,7 +66,7 @@ function Get-YesNoResponse {
     }
 }
 
-function Show-UserData {
+function Show-ADUserData {
 
     <#
     
@@ -149,7 +149,7 @@ while($runSearch){
                 # Ask for an ID number to retrieve and display the full search results for that specific user
                 [int32]$adUserSelection = Read-Host "Enter a user's ID to display the results for that user" 
                 
-                Show-UserData -User $searchResults[$adUserSelection] -PropertiesToShow $desiredProperties
+                Show-ADUserData -User $searchResults[$adUserSelection] -PropertiesToShow $desiredProperties
 
                 # Ask the user if they want to see the search results again
                 $viewSearchResults = Get-YesNoResponse -Prompt "View the search results again?"
@@ -159,7 +159,7 @@ while($runSearch){
         # If there is only one result, simply display the first object in the hashtable
         else {
             
-            Show-UserData -User $searchResults[0] -PropertiesToShow $desiredProperties
+            Show-ADUserData -User $searchResults[0] -PropertiesToShow $desiredProperties
         }
     }
              
