@@ -1,0 +1,3 @@
+[submodule "powershell-helper-functions"]
+	path = powershell-helper-functions
+	url = https://github.com/electrical-breakdown/powershell-helper-functions.git
