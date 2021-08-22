@@ -8,102 +8,18 @@
     properties determined by the $desiredProperties variable. The search allows for partial matches and will prompt 
     the user to select the result they are looking for. 
 
+    Requires the PowerShellHelperFunctions module be included in a subdirectory of the directory the script is run from.
+
 #>
 
-#--------------------------------- Define functions ------------------------------------#
 
-function Get-UserResponse {
- 
-    <#
-    
-    .SYNOPSIS
-    Prompts a user to answer yes or no to a given prompt  
-    
-    .DESCRIPTION
-    Provides a yes/no question to the user and requests a response. Returns true if the response is yes, returns false if the answer is no.
-
-    .INPUTS
-    Reads a string input from the console
-
-    .OUTPUTS
-    Returns a boolean value
-        
-    #>
+#------------------------------Import helper functions  -------------------------------#
 
 
-    [CmdletBinding()]
-    param (
-        
-        [Parameter(Mandatory)]
-        [String]$Prompt
-    
-    )
-
-    $acceptedResponses = "y", "yes", "n", "no"
-    $invalidResponseMsg = "`nInvalid Entry. Please enter 'y' or 'n'."
-    $responseOptions = "(y/n)"
-
-    while($true){
-            
-        $adUserResponse = Read-Host "`n$Prompt $responseOptions"  
-
-        if ($adUserResponse -notin $acceptedResponses){
-
-            Write-Host $invalidResponseMsg -ForegroundColor Red                                     
-                            
-        } 
-                       
-        else{   
-                            
-            if($adUserResponse -in ("y", "yes")){
-
-                return $true
-
-            }
-
-            return $false
-
-        }           
-    }
-}
-
-function Show-ADUserData {
-
-    <#
-    
-    .SYNOPSIS
-    Displays the results of searching for a user in AD   
-    
-    .DESCRIPTION
-    Accepts an AD user object and an array of properties as inputs. Displays that user's properties to the console
-
-    .INPUTS
-    Accepts two mandatory parameters - an AD user object, and an array of properties
-        
-    .OUTPUTS
-    Outputs a table to the console
-
-    #>
+Import-Module -Name "$($PSScriptRoot)\powershell-helper-functions\PowerShellHelperFunctions.psm1"
 
 
-    [CmdletBinding()]
-    param (
-        
-        [Parameter(Mandatory)]
-        [Microsoft.ActiveDirectory.Management.ADUser]$User,
-        [Parameter(Mandatory)]
-        [array]$PropertiesToShow
-    
-    )
-
-    Clear-Host
-    Write-Host "Results for $($User.Name):"    
-    $User | Format-Table $PropertiesToShow 
-
-}
-
-
-#--------------------------- Start Main Program ----------------------------#
+#--------------------------------- Start Main Program ---------------------------------#
 
 
 $runSearch = $true
@@ -150,7 +66,7 @@ while($runSearch){
                 Show-ADUserData -User $searchResults[$adUserSelection] -PropertiesToShow $desiredProperties
 
                 # Ask the user if they want to see the search results again
-                $viewSearchResults = Get-UserResponse -Prompt "View the search results again?"
+                $viewSearchResults = Get-YesNoResponse -Prompt "View the search results again?"
             }
         }
 
@@ -161,7 +77,7 @@ while($runSearch){
         }
     }
              
-    $runSearch = Get-UserResponse -Prompt "Search again?"   
+    $runSearch = Get-YesNoResponse -Prompt "Search again?"   
 
 
 } # close main while loop
