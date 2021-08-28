@@ -61,9 +61,10 @@ while($runSearch){
                 $searchResults.Keys | Select-Object @{l="ID"; e={$_}}, @{label="Name"; expression={($searchResults.$_).Name}} | Out-Host
 
                 # Ask for an ID number to retrieve and display the full search results for that specific user
-                [int32]$adUserSelection = Read-Host "Enter a user's ID to display the results for that user" 
+                [int32]$userSelectionNumber = Read-Host "Enter a user's ID to display the results for that user" 
                 
-                Show-ADUserData -User $searchResults[$adUserSelection] -PropertiesToShow $desiredProperties
+                $selectedUser = $searchResults[$userSelectionNumber]                
+                Show-ADUserData -User $selectedUser -PropertiesToShow $desiredProperties
 
                 # Ask the user if they want to see the search results again
                 $viewSearchResults = Get-YesNoResponse -Prompt "View the search results again?"
@@ -73,10 +74,33 @@ while($runSearch){
         # If there is only one result, simply display the first object in the hashtable
         else {
             
-            Show-ADUserData -User $searchResults[0] -PropertiesToShow $desiredProperties
+            $selectedUser = $searchResults[0]
+            Show-ADUserData -User $selectedUser -PropertiesToShow $desiredProperties         
+
         }
     }
-             
+    
+    # If the selected user account is currently locked, provide the option to unlock it
+
+    if($selectedUser.LockedOut -eq $true){
+
+        $unlockAccount = Get-YesNoResponse -Prompt "$($selectedUser.Name) is currently locked. Unlock now?"
+
+        if($unlockAccount -eq $true){
+
+                Unlock-ADAccount -Identity $selectedUser.SamAccountName                 
+
+                $selectedUser.LockedOut = $false
+                Show-ADUserData -User $selectedUser -PropertiesToShow $desiredProperties 
+                Write-Host "$($selectedUser.Name) has been unlocked."
+            
+        }
+
+
+    }
+
+
+
     $runSearch = Get-YesNoResponse -Prompt "Search again?"   
 
 
