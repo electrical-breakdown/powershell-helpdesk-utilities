@@ -95,12 +95,9 @@ while($runSearch){
                 Write-Host "$($selectedUser.Name) has been unlocked."
             
         }
-
-
     }
 
-
-
+    
     $runSearch = Get-YesNoResponse -Prompt "Search again?"   
 
 
